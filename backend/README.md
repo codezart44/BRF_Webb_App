@@ -23,3 +23,16 @@ other...
 
 
 
+
+
+## REDIS
+> brew services start reids
+> brew services stop redis
+> redis-server  (ctrl-c to escape)
+> redis-cli  (ctrl-c to escape)
+    > lpush key element (...element)
+    > lrange key start stop
+    > rpop key
+    > set key value
+    > get key
+    > del key

@@ -1,3 +1,17 @@
 
 numpy
 pandas
+
+Flask
+Flask-CORS
+Flask-WTF
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-Security
+Flask-RESTful
+Flask-RESTPlus
+Flask-Testing
+Flask-Bcrypt
+redis
+
