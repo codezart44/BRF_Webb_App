@@ -29,7 +29,7 @@ body {
   .login__register {
     flex: 1; /* Take up half of the available space */
     padding: 1rem;
-    background-color: #007bff;
+    background-color: hsl(0, 0%, 46%);
 }
   
   .login__containerLeft {
@@ -60,7 +60,7 @@ body {
   
   .login__buttonRight {
     background-color: #fff;
-    color: #007bff;
+    color: hsl(0, 0%, 46%);
     border: none;
     border-radius: 5px;
     padding: 0.5rem 1rem;
@@ -68,15 +68,11 @@ body {
     transition: background-color 0.3s ease;
   }
   .login__buttonLeft {
-    background-color: #007bff;
+    background-color: hsl(0, 0%, 46%);
     color: #fff;
     border: none;
     border-radius: 5px;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
   }
