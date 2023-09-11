@@ -50,7 +50,7 @@ function Login() {
       <div className="login__register">
           <div className="login__containerRight">
               <h2 className='login__textRight'>Hallå granne!</h2>
-              <p className="login__textRight">Se till att komma igång och boka tvättider idag</p>
+              <p className="login__textRight">Om du inte har ett konto, gör ett idag!</p>
               <input type="text" name='first_name' placeholder='Förnamn' value={registerData.first_name} onChange={handleRegisterChange}/>
               <input type="text" name='last_name' placeholder='Efternamn' value={registerData.last_name} onChange={handleRegisterChange}/>
               <input type="email" name='email' placeholder="Email" value={registerData.email} onChange={handleRegisterChange}/>
