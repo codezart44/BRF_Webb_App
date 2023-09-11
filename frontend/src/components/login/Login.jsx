@@ -32,7 +32,7 @@ function Login() {
 
   const handleRegisterSubmit = (event) => {
     event.preventDefault();
-    console.log(loginData);
+    console.log(registerData);
   }
 
 
@@ -41,7 +41,6 @@ function Login() {
       <div className="login__container">
          <div className="login__containerLeft">
               <h1>Logga in</h1>
-              <p className='login__textLeft'>Se till att logga in idag och boka din tvättid!</p>
               <input type="email" name='email' placeholder="Email" value={loginData.email} onChange={handleLoginChange}/>
               <input type="password" name='password' placeholder="Lösenord" value={loginData.password} onChange={handleLoginChange}/><br/>
               <button className='login__buttonLeft' onClick={handleLoginSubmit}>Logga in</button>
@@ -51,11 +50,11 @@ function Login() {
           <div className="login__containerRight">
               <h2>Hallå granne!</h2>
               <p>Se till att komma igång och boka tvättider idag</p>
-              <input type="text" placeholder='Förnamn' />
-              <input type="text" placeholder='Efternamn' />
-              <input type="email" placeholder="Email"/>
-              <input type="password" placeholder="Lösenord"/><br/>
-              <button className='login__buttonRight'>Registrera dig</button>
+              <input type="text" name='first_name' placeholder='Förnamn' value={registerData.first_name} onChange={handleRegisterChange}/>
+              <input type="text" name='last_name' placeholder='Efternamn' value={registerData.last_name} onChange={handleRegisterChange}/>
+              <input type="email" name='email' placeholder="Email" value={registerData.email} onChange={handleRegisterChange}/>
+              <input type="password" name='password' placeholder="Lösenord" value={registerData.password} onChange={handleRegisterChange}/><br/>
+              <button className='login__buttonRight' onClick={handleRegisterSubmit}>Registrera dig</button>
           </div>
       </div>  
     </div>
@@ -63,3 +62,4 @@ function Login() {
 }
 
 export default Login
+
