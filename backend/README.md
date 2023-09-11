@@ -1,6 +1,36 @@
 
 # This is a school project in DD1334 HT23 Database Technology (dbtech23)
 
+Grupp:
+- Alexander Karolin
+- Oskar Edén Wallberg
+
+Hej, vårt projekt består av två servrar (en för frontend och webbsidan och en för backend med routing och sqlite3 databas). 
+
+techstack:
+- React med jsx
+- Python, Flask
+- Sqlite3 för databas
+
+För att starta projektet:
+Kopiera projektet till en mapp och kör följande:
+> cd backend
+> pip install -r requirements.txt
+> cd ..
+> cd frontend
+> npm install
+> npm run dev
+(kör app.py filen i en terminal och starta med npm run dev i en annan separat)
+
+Om detta inte fungerar visar vi gärna vad vi har gjort vid nästa tillfälle. Iom att appen fortfarande är i demo fasen finns inte ett snabbkommando for att starta den men kommer att implementeras. 
+
+
+
+
+
+
+
+______________________________________________________________
 By:
 - Oskar Wallberg
 - Alexander Karolin
