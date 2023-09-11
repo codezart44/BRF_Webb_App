@@ -17,7 +17,6 @@ function Login() {
   const [responseData, setResponseData] = useState({});
 
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [failModalVisible, setFailModalVisible] = useState(false);
 
   const handleLoginChange = (event) => {
     const { name, value } = event.target;
