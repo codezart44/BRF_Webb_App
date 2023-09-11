@@ -42,7 +42,9 @@ body {
   h1, h2 {
     margin-bottom: 1rem;
   }
-  
+  .login__textRight {
+    color: #fff;
+  }
   input[type="text"],
   input[type="email"],
   input[type="password"] {
