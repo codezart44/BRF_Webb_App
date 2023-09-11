@@ -14,6 +14,8 @@ function Login() {
     password: ''
   });
 
+  const [responseData, setResponseData] = useState({});
+
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [failModalVisible, setFailModalVisible] = useState(false);
 
@@ -22,9 +24,25 @@ function Login() {
     setLoginData({ ...loginData, [name]: value });
   };
 
+
+
   const handleLoginSubmit = (event) => {
     event.preventDefault();
     console.log(loginData);
+    fetch('http://127.0.0.1:5000/auth/login', 
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(loginData)
+        })
+        .then(response => response.json())
+        .then((response) => {
+          setResponseData(response);
+        })
+        .catch(error => console.error('Error with login: ', error))
+
+        setSuccessModalVisible(!successModalVisible);
+        setFailModalVisible(false);
   };
 
   const handleRegisterChange = (event) => {
@@ -41,10 +59,14 @@ function Login() {
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(registerData)
         })
-        .then(response => response.text())
-        .then(response => console.log(response))
-        .catch(error => console.error('Error with register', error))
-    
+        .then(response => response.json())
+        .then(response => {
+          setResponseData(response)
+        })
+        .catch(error => console.error('Error with register: ', error))
+
+        setSuccessModalVisible(!successModalVisible);
+        setFailModalVisible(false);
   };
 
   return (
@@ -70,22 +92,6 @@ function Login() {
           <br />
           <button className="login__buttonLeft" onClick={handleLoginSubmit}>
             Logga in
-          </button>
-          <button
-            onClick={() => {
-              setSuccessModalVisible(!successModalVisible);
-              setFailModalVisible(false);
-            }}
-          >
-            success
-          </button>
-          <button
-            onClick={() => {
-              setFailModalVisible(!failModalVisible);
-              setSuccessModalVisible(false);
-            }}
-          >
-            fail
           </button>
         </div>
       </div>
@@ -131,8 +137,8 @@ function Login() {
       {successModalVisible && (
         <div className="modal">
           <div className="modal-content">
-            <h3>Bra jobbat!</h3>
-            <p>Kontot är skapat nu är det bara att boka din tvättid</p>
+            <h3>{responseData.message}</h3>
+            <p>{`Authorized: ${responseData.status}`}</p>
             <button
               onClick={() => {
                 setSuccessModalVisible(false);
@@ -144,21 +150,6 @@ function Login() {
         </div>
       )}
 
-      {failModalVisible && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Fel!</h3>
-            <p>Mejl adressen som du angett används redan, testa att avända en annan</p>
-            <button
-              onClick={() => {
-                setFailModalVisible(false);
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
