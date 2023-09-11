@@ -17,16 +17,14 @@ body {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin-top: 6rem;
-  position: relative; /* Ensure relative positioning for modal */
+  position: relative; 
 }
 
-/* Style for the "Login" div */
 .login__container {
   flex: 1;
   padding: 1rem;
 }
 
-/* Style for the "Register" div */
 .login__register {
   flex: 1;
   padding: 1rem;
@@ -45,6 +43,9 @@ h1, h2 {
 }
 .login__textRight {
   color: #fff;
+}
+.login__textLeft {
+  color: hsl(0, 0%, 46%);
 }
 
 input[type="text"],
@@ -76,18 +77,17 @@ input[type="password"] {
   transition: background-color 0.3s ease;
 }
 
-/* Style for the modal */
 .modal {
-  position: fixed; /* Fixed position to cover the whole viewport */
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  background: rgba(0, 0, 0, 0.7); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Higher z-index to appear on top */
+  z-index: 9999; 
 }
 
 .modal-content {
@@ -98,7 +98,6 @@ input[type="password"] {
   text-align: center;
 }
 
-/* Close button for the modal */
 .modal-content button {
   background-color: hsl(0, 0%, 46%);
   color: #fff;

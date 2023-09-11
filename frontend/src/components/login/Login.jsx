@@ -51,8 +51,8 @@ function Login() {
     <div className="login__section">
       <div className="login__container">
         <div className="login__containerLeft">
-          <h1>Logga in</h1>
-          <p>Se om tvättstugan är ledig genom att logga in</p>
+          <h1 className='login__textLeft'>Logga in</h1>
+          <p className='login__textLeft'>Se om tvättstugan är ledig genom att logga in</p>
           <input
             type="email"
             name="email"
