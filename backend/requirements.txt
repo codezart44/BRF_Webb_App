@@ -1,17 +1,26 @@
 
+pip==23.2.1
+setuptools==68.1.2
+
 numpy
 pandas
 
+redis
+SQLAlchemy
+python-dotenv
+
+# Flask dependencies
 Flask
 Flask-CORS
 Flask-WTF
-Flask-SQLAlchemy
 Flask-Migrate
 Flask-Login
+Flask-SQLAlchemy
 Flask-Security
 Flask-RESTful
 Flask-RESTPlus
 Flask-Testing
 Flask-Bcrypt
-redis
 
+# Config
+python-dotenv
