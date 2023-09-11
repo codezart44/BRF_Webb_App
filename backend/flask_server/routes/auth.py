@@ -20,7 +20,7 @@ auth_blueprint = Blueprint(
 )
 
 
-@auth_blueprint.route('/register', methods=['GET', 'POST'])
+@auth_blueprint.route('/register', methods=['POST'])
 def register_user():
     try:
         data: dict = request.get_json()
@@ -89,7 +89,36 @@ def register_user():
 
 @auth_blueprint.route('/login', methods=['POST'])
 def login_user():
-    pass
+    try: 
+        data: dict = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        assert (email and password)
+
+        path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/db/dev.db'
+        con = sqlite3.connect(path)
+
+        sql_query = f"""
+        --sql
+        SELECT 
+            [first_name],
+            [last_name],
+            [email],
+            [password]
+        FROM users
+        WHERE email = ?
+        ;
+        """
+        user = pd.read_sql_query(sql=sql_query, con=con, params=(email,))
+        print(user)
+        response = make_response(jsonify(user.to_dict()), 200)
+        return response
+    
+    except Exception as e:
+        response = make_response('Error with login.', 400)
+        return response
+
 
 @auth_blueprint.route('/logout', methods=['GET'])
 def logout_user():
