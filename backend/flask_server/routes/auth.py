@@ -11,6 +11,10 @@ import json
 USER = 1
 ADMIN = 2
 
+# status
+FAILED = 0
+SUCCESS = 1
+
 
 
 auth_blueprint = Blueprint(
@@ -47,7 +51,10 @@ def register_user():
         
         if email_already_in_use:
             con.close()
-            response = make_response('Email already in use', 200)
+            response = make_response(jsonify({
+                'status': FAILED,
+                'message': 'Email already in use'
+            }), 200)
             return response
         
         salt = bcrypt.gensalt(rounds=12)
@@ -72,11 +79,14 @@ def register_user():
         new_user.to_sql(name='users', con=con, if_exists='append', index=False)
         con.close()
 
-        response = make_response(jsonify('User was added successfully.'), 200)
+        response = make_response(jsonify({
+            'status': SUCCESS,
+            'message': 'User was added successfully.'
+        }), 200)
         return response
     
     except Exception as e:
-        response = make_response('Error with register', 400)
+        response = make_response(jsonify('Error with register. '), 400)
         return response
 
 # sql_query = f"""
@@ -91,8 +101,8 @@ def register_user():
 def login_user():
     try: 
         data: dict = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+        email: str = data.get('email')
+        password: str = data.get('password')
 
         assert (email and password)
 
@@ -101,7 +111,24 @@ def login_user():
 
         sql_query = f"""
         --sql
+        SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_exists
+        ;
+        """
+        df = pd.read_sql_query(sql=sql_query, con=con, params=(email, ))
+        email_exists = (df['email_exists'].values[0] == 1)
+        
+        if not email_exists:
+            con.close()
+            response = make_response(jsonify({
+                'status': FAILED,
+                'message': 'Email not found.'
+            }), 200)
+            return response
+
+        sql_query = f"""
+        --sql
         SELECT 
+            [user_id],
             [first_name],
             [last_name],
             [email],
@@ -111,12 +138,30 @@ def login_user():
         ;
         """
         user = pd.read_sql_query(sql=sql_query, con=con, params=(email,))
-        print(user)
-        response = make_response(jsonify(user.to_dict()), 200)
+
+        pw_hash: str = user['password'].values[0]
+        authorized = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=pw_hash.encode('utf-8'))
+        
+        if authorized:
+            response = make_response(jsonify({
+                'status': SUCCESS,
+                'message': 'Login success!',
+                'user_id': user['user_id'].values[0],
+                'first_name': user['first_name'].values[0],
+                'last_name': user['last_name'].values[0],
+                'email': user['email'].values[0],
+                'authorized': authorized
+            }), 200)
+        else:
+            response = make_response(jsonify({
+                'status': FAILED,
+                'message': 'Incorrect password.',
+                'authorized': authorized
+            }))
         return response
     
     except Exception as e:
-        response = make_response('Error with login.', 400)
+        response = make_response(jsonify('Error with login.'), 400)
         return response
 
 
