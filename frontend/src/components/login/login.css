@@ -1,78 +1,110 @@
 body {
-    background: #e9ebee;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    height: 100vh;
-  }
-  
-  .login__section {
-    display: flex; 
-    width: 100%;
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin-top: 6rem;
-  }
-  
-  /* Style for the "Login" div */
-  .login__container {
-    flex: 1; /* Take up half of the available space */
-    padding: 1rem;
-  }
-  
-  /* Style for the "Register" div */
-  .login__register {
-    flex: 1; /* Take up half of the available space */
-    padding: 1rem;
-    background-color: hsl(0, 0%, 46%);
+  background: #e9ebee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  height: 100vh;
 }
-  
-  .login__containerLeft {
-    padding: 1rem;
-  }
-  .login__containerRight {
-    padding: 1rem;
-  }
 
-  h1, h2 {
-    margin-bottom: 1rem;
-  }
-  .login__textRight {
-    color: #fff;
-  }
-  .login__textRight {
-    color: #fff;
-  }
-  input[type="text"],
-  input[type="email"],
-  input[type="password"] {
-    width: 100%; 
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .login__buttonRight {
-    background-color: #fff;
-    color: hsl(0, 0%, 46%);
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .login__buttonLeft {
-    background-color: hsl(0, 0%, 46%);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+.login__section {
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 6rem;
+  position: relative; /* Ensure relative positioning for modal */
+}
+
+/* Style for the "Login" div */
+.login__container {
+  flex: 1;
+  padding: 1rem;
+}
+
+/* Style for the "Register" div */
+.login__register {
+  flex: 1;
+  padding: 1rem;
+  background-color: hsl(0, 0%, 46%);
+}
+
+.login__containerLeft {
+  padding: 1rem;
+}
+.login__containerRight {
+  padding: 1rem;
+}
+
+h1, h2 {
+  margin-bottom: 1rem;
+}
+.login__textRight {
+  color: #fff;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login__buttonRight {
+  background-color: #fff;
+  color: hsl(0, 0%, 46%);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.login__buttonLeft {
+  background-color: hsl(0, 0%, 46%);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Style for the modal */
+.modal {
+  position: fixed; /* Fixed position to cover the whole viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Higher z-index to appear on top */
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Close button for the modal */
+.modal-content button {
+  background-color: hsl(0, 0%, 46%);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
