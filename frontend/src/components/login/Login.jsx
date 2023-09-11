@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import "./login.css"
 
 function Login() {
@@ -32,7 +32,16 @@ function Login() {
 
   const handleRegisterSubmit = (event) => {
     event.preventDefault();
-    console.log(registerData);
+    console.log(registerData)
+    fetch('http://127.0.0.1:5000/auth/register', 
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(registerData)
+        })
+        .then(response => response.text())
+        .then(response => console.log(response))
+        .catch(error => console.error('Error with register', error))
   }
 
 

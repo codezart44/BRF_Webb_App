@@ -1,0 +1,5 @@
+.venv/
+*.sql
+__pycache__
+*pyc
+*.rdb

@@ -23,3 +23,45 @@ other...
 
 
 
+
+
+## REDIS
+> brew services start reids
+> brew services stop redis
+> redis-server  (ctrl-c to escape)
+> redis-cli  (ctrl-c to escape)
+    > lpush key element (...element)
+    > lrange key start stop
+    > rpop key
+    > set key value
+    > get key
+    > del key
+
+
+
+# Backend Structure:
+Resource - https://github.com/mtnbarreto/flask-base-api/tree/master/flask-api/project
+
+- flask-server/
+    - db/
+        - create_databases.sql
+    - project/
+        - api/
+            - utils/
+                - __init__.py
+                - decorators.py
+                - exceptions.py
+                - error_handlers.py
+            - routes/
+                - __init__.py
+                - ...all my blueprints...
+            - __init__.py
+        - models/
+            - __init__.py
+            - ...all my models...
+        - __init__.py               # imports blueprints and registers them
+        - config.py                 # config classes 
+        - extensions.py             # init flask extensions used
+    - tests/
+        - ...tests for models and blueprint routes...
+    - set_env_vars.sh
