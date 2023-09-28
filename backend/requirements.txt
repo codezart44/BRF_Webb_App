@@ -11,6 +11,7 @@ python-dotenv
 
 # Flask dependencies
 Flask
+Flask-Session
 Flask-CORS
 Flask-WTF
 Flask-Migrate

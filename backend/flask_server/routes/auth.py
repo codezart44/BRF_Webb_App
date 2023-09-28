@@ -12,6 +12,7 @@ USER = 1
 ADMIN = 2
 
 # status
+ERROR = -1
 FAILED = 0
 SUCCESS = 1
 
@@ -79,10 +80,10 @@ def register_user():
         new_user.to_sql(name='users', con=con, if_exists='append', index=False)
         con.close()
 
-        response = make_response(jsonify({
+        response = jsonify({
             'status': SUCCESS,
             'message': 'User was added successfully.'
-        }), 200)
+        }), 200
         return response
     
     except Exception as e:
@@ -104,64 +105,78 @@ def login_user():
         email: str = data.get('email')
         password: str = data.get('password')
 
-        assert (email and password)
-
-        path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/db/dev.db'
-        con = sqlite3.connect(path)
-
-        sql_query = f"""
-        --sql
-        SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_exists
-        ;
-        """
-        df = pd.read_sql_query(sql=sql_query, con=con, params=(email, ))
-        email_exists = (df['email_exists'].values[0] == 1)
-        
-        if not email_exists:
-            con.close()
-            response = make_response(jsonify({
-                'status': FAILED,
-                'message': 'Email not found.'
-            }), 200)
+        if not (email and password):
+            response = jsonify({
+                'status': FAILED, 
+                'message': 'Missing payload.'
+            }), 400 # BadRequest
             return response
-
-        sql_query = f"""
-        --sql
-        SELECT 
-            [user_id],
-            [first_name],
-            [last_name],
-            [email],
-            [password]
-        FROM users
-        WHERE email = ?
-        ;
-        """
-        user = pd.read_sql_query(sql=sql_query, con=con, params=(email,))
-
-        pw_hash: str = user['password'].values[0]
-        authorized = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=pw_hash.encode('utf-8'))
         
-        if authorized:
-            response = make_response(jsonify({
+        path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/db/dev.db'
+        with sqlite3.connect(path) as con:
+            sql_query = f"""
+            --sql
+            SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_exists
+            ;
+            """
+            
+            result = pd.read_sql_query(sql_query, con, params=(email,))
+            emailExists = (result['email_exists'].values[0] == 1)
+            
+            if not emailExists:
+                response = jsonify({
+                    'status': FAILED,
+                    'message': 'Email not found.'
+                }), 404 # NotFound
+                return response
+
+            sql_query = f"""
+            --sql
+            SELECT 
+                [user_id],
+                -- [first_name],
+                -- [last_name],
+                -- [email],
+                [password]
+            FROM users
+            WHERE email = ?
+            ;
+            """
+            result = pd.read_sql_query(sql_query, con, params=(email,))
+            user_data = result.values.ravel().tolist()
+            pw_hash: str = user_data.pop(-1)
+            authorized = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=pw_hash.encode('utf-8'))
+            
+            # user_data = {
+            #     'user_id': user_data[0],
+            #     'first_name': user_data[1],
+            #     'last_name': user_data[2],
+            #     'email': user_data[3],
+            #     'authorized': authorized
+            # }
+
+            if not authorized:
+                response = jsonify({
+                    'status': FAILED,
+                    'message': 'Incorrect password.',
+                    'authorized': authorized
+                }), 401 # Unauthorized
+                return response
+            
+
+            # bind user id to live session
+            session['user-id'] = user_data[0]
+
+            response = jsonify({
                 'status': SUCCESS,
-                'message': 'Login success!',
-                'user_id': user['user_id'].values[0],
-                'first_name': user['first_name'].values[0],
-                'last_name': user['last_name'].values[0],
-                'email': user['email'].values[0],
+                'message': 'Login success.',
                 'authorized': authorized
-            }), 200)
-        else:
-            response = make_response(jsonify({
-                'status': FAILED,
-                'message': 'Incorrect password.',
-                'authorized': authorized
-            }))
-        return response
-    
-    except Exception as e:
-        response = make_response(jsonify('Error with login.'), 400)
+            }), 200 # OK
+            return response
+                
+    except Exception:
+        response = jsonify({'status': ERROR,
+                            'message': 'Unexpected error occurred.'}), 500
         return response
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './login.css';
 
 function Login() {
@@ -37,11 +37,17 @@ function Login() {
         .then(response => response.json())
         .then((response) => {
           setResponseData(response);
+          fetch('http://127.0.0.1:5000/users/get')
+            .then(response => response.json())
+            .then(response => console.log(response))
+            .catch(error => console.error('Error with login: ', error))
         })
         .catch(error => console.error('Error with login: ', error))
 
-        setSuccessModalVisible(!successModalVisible);
-        setFailModalVisible(false);
+    
+
+    setSuccessModalVisible(!successModalVisible);
+    setFailModalVisible(false);
   };
 
   const handleRegisterChange = (event) => {
@@ -64,16 +70,17 @@ function Login() {
         })
         .catch(error => console.error('Error with register: ', error))
 
-        setSuccessModalVisible(!successModalVisible);
-        setFailModalVisible(false);
+    
+  setSuccessModalVisible(!successModalVisible);
+    setFailModalVisible(false);
   };
 
   return (
     <div className="login__section">
       <div className="login__container">
         <div className="login__containerLeft">
-          <h1>Logga in</h1>
-          <p>Se om tvättstugan är ledig genom att logga in</p>
+          <h1 className='login__textLeft'>Logga in</h1>
+          <p className='login__textLeft'>Se om tvättstugan är ledig genom att logga in</p>
           <input
             type="email"
             name="email"
@@ -92,7 +99,7 @@ function Login() {
           <button className="login__buttonLeft" onClick={handleLoginSubmit}>
             Logga in
           </button>
-        </div>
+                  </div>
       </div>
       <div className="login__register">
         <div className="login__containerRight">
@@ -149,7 +156,7 @@ function Login() {
         </div>
       )}
 
-    </div>
+          </div>
   );
 }
 

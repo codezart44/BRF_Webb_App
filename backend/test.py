@@ -38,6 +38,17 @@ user_data = {
     'created_at': [now],
     'updated_at': [now]
 }
+
+response = {
+    'status': 1,
+    'message': 'Login success.',
+    **user_data,
+}
+
+print(response)
+quit()
+
+
 new_user = pd.DataFrame(user_data)
 
 pd.options.display.max_columns = 10
