@@ -1,7 +1,7 @@
 
 
-from flask import Flask, session
-from flask_session import Session
+from flask import Flask
+# from flask_session import Session
 from flask_cors import CORS
 
 
@@ -18,11 +18,11 @@ from routes.users import users_blueprint
 def create_app():
     app = Flask(__name__)
 
-    app.secret_key = 'blah'
-    app.config['SESSION_TYPE'] = 'filesystem'
+    # app.secret_key = 'blah'
+    # app.config['SESSION_TYPE'] = 'filesystem'
     # app.config['SESSION_FILE_DIR'] = 'database/flask_sessions'
 
-    Session(app)
+    # Session(app)
     # config settings here for CORS
     CORS(app)
 

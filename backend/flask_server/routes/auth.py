@@ -27,6 +27,15 @@ auth_blueprint = Blueprint(
 
 @auth_blueprint.route('/register', methods=['POST'])
 def register_user():
+    """
+    Expects:
+    {
+        first_name: ,
+        last_name: ,
+        email: ,
+        password: 
+    }
+    """
     try:
         data: dict = request.get_json()
         first_name: str = data.get('first_name')
@@ -36,49 +45,36 @@ def register_user():
 
         assert (first_name and last_name and email and password)
         
-        
         # path generated relative to auth.py and not app.py
         path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/db/dev.db'
-        con = sqlite3.connect(path)
+        with sqlite3.connect(path) as con:
 
-        sql_query = f"""
-        --sql
-        SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_already_in_use
-        ;
-        """
-        df = pd.read_sql_query(sql=sql_query, con=con, params=(email, ))
-        email_already_in_use = (df['email_already_in_use'].values[0] == 1)
-        
-        
-        if email_already_in_use:
-            con.close()
-            response = make_response(jsonify({
-                'status': FAILED,
-                'message': 'Email already in use'
-            }), 200)
-            return response
-        
-        salt = bcrypt.gensalt(rounds=12)
-        pw_enc = password.encode('utf-8')                       # FIXME make encoding setting
-        pw_hash = bcrypt.hashpw(password=pw_enc, salt=salt)
-        
+            emailTaken = check_email_exists(email=email, con=con)
+            
+            if emailTaken:
+                response = jsonify({
+                    'status': FAILED,
+                    'message': 'Email already in use'
+                }), 200
+                return response
+            
+            salt = bcrypt.gensalt(rounds=12)
+            pw_enc = password.encode('utf-8')                       # FIXME make encoding setting
+            pw_hash = bcrypt.hashpw(password=pw_enc, salt=salt)
+            
 
-        now = datetime.now()         #.strftime('%Y-%m-%d %H:%M:%S')
-        user_data = {
-            'user_id': [uuid4().hex],
-            'first_name': [first_name],
-            'last_name': [last_name],
-            'email': [email],
-            'password': [pw_hash.decode('utf-8')],
-            'user_role': [USER],
-            'created_at': [now],
-            'updated_at': [now]
-        }
-
-        
-        new_user = pd.DataFrame(user_data)
-        new_user.to_sql(name='users', con=con, if_exists='append', index=False)
-        con.close()
+            now = datetime.now()         #.strftime('%Y-%m-%d %H:%M:%S')
+            user_data = {
+                'user_id': [uuid4().hex],
+                'first_name': [first_name],
+                'last_name': [last_name],
+                'email': [email],
+                'password': [pw_hash.decode('utf-8')],
+                'user_role': [USER],
+                'created_at': [now],
+                'updated_at': [now]
+            }
+            append_user(user_data=user_data)
 
         response = jsonify({
             'status': SUCCESS,
@@ -87,19 +83,22 @@ def register_user():
         return response
     
     except Exception as e:
-        response = make_response(jsonify('Error with register. '), 400)
+        response = jsonify({
+            'status': ERROR,
+            'message': 'Error with register.'
+        }), 400
         return response
-
-# sql_query = f"""
-# --sql
-# INSERT INTO users (user_id, first_name, last_name, email, password, user_role, created_at, updated_at) 
-# VALUES (?,?,?,?,?,?,?,?)
-# ;
-# """
 
 
 @auth_blueprint.route('/login', methods=['POST'])
 def login_user():
+    """
+    Expects:
+    {
+        'email': ,
+        'password': 
+    }
+    """
     try: 
         data: dict = request.get_json()
         email: str = data.get('email')
@@ -114,65 +113,32 @@ def login_user():
         
         path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+'/db/dev.db'
         with sqlite3.connect(path) as con:
-            sql_query = f"""
-            --sql
-            SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_exists
-            ;
-            """
-            
-            result = pd.read_sql_query(sql_query, con, params=(email,))
-            emailExists = (result['email_exists'].values[0] == 1)
-            
+            emailExists = check_email_exists(email=email, con=con)
             if not emailExists:
                 response = jsonify({
                     'status': FAILED,
                     'message': 'Email not found.'
                 }), 404 # NotFound
                 return response
+            authorized = authorize_login(email=email, password=password, con=con)
 
-            sql_query = f"""
-            --sql
-            SELECT 
-                [user_id],
-                -- [first_name],
-                -- [last_name],
-                -- [email],
-                [password]
-            FROM users
-            WHERE email = ?
-            ;
-            """
-            result = pd.read_sql_query(sql_query, con, params=(email,))
-            user_data = result.values.ravel().tolist()
-            pw_hash: str = user_data.pop(-1)
-            authorized = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=pw_hash.encode('utf-8'))
-            
-            # user_data = {
-            #     'user_id': user_data[0],
-            #     'first_name': user_data[1],
-            #     'last_name': user_data[2],
-            #     'email': user_data[3],
-            #     'authorized': authorized
-            # }
-
-            if not authorized:
-                response = jsonify({
-                    'status': FAILED,
-                    'message': 'Incorrect password.',
-                    'authorized': authorized
-                }), 401 # Unauthorized
-                return response
-            
-
-            # bind user id to live session
-            session['user-id'] = user_data[0]
-
+        if not authorized:
             response = jsonify({
-                'status': SUCCESS,
-                'message': 'Login success.',
+                'status': FAILED,
+                'message': 'Incorrect password.',
                 'authorized': authorized
-            }), 200 # OK
+            }), 401 # Unauthorized
             return response
+        
+        # bind user id to live session
+        # session['user-id'] = user_data[0]
+
+        response = jsonify({
+            'status': SUCCESS,
+            'message': 'Login success.',
+            'authorized': authorized
+        }), 200 # OK
+        return response
                 
     except Exception:
         response = jsonify({'status': ERROR,
@@ -184,3 +150,42 @@ def login_user():
 def logout_user():
     pass
 
+
+# SQL embedded third generation programming language functions
+
+def check_email_exists(email, con): 
+    sql_query = f"""
+    --sql
+    SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) AS email_exists
+    ;
+    """
+    df = pd.read_sql_query(sql=sql_query, con=con, params=(email, ))
+    emailExists = (df['email_exists'].values[0] == 1)
+    return emailExists
+
+def append_user(user_data, con):
+    # sql_query = f"""
+    # --sql
+    # INSERT INTO users (user_id, first_name, last_name, email, password, user_role, created_at, updated_at) 
+    # VALUES (?,?,?,?,?,?,?,?)
+    # ;
+    # """
+    new_user = pd.DataFrame(user_data)
+    new_user.to_sql(name='users', con=con, if_exists='append', index=False)
+
+def authorize_login(email, password, con):
+    sql_query = f"""
+    --sql
+    SELECT 
+        [user_id],
+        [password]
+    FROM users
+    WHERE email = ?
+    ;
+    """
+    result = pd.read_sql_query(sql_query, con, params=(email,))
+
+    user_data = result.values.ravel().tolist()
+    pw_hash: str = user_data.pop(-1)
+    authorized = bcrypt.checkpw(password=password.encode('utf-8'), hashed_password=pw_hash.encode('utf-8'))
+    return authorized

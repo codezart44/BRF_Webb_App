@@ -25,6 +25,8 @@ function Login() {
 
 
 
+
+
   const handleLoginSubmit = (event) => {
     event.preventDefault();
     console.log(loginData);
@@ -47,7 +49,7 @@ function Login() {
     
 
     setSuccessModalVisible(!successModalVisible);
-    setFailModalVisible(false);
+    // setFailModalVisible(false);
   };
 
   const handleRegisterChange = (event) => {
@@ -72,7 +74,7 @@ function Login() {
 
     
   setSuccessModalVisible(!successModalVisible);
-    setFailModalVisible(false);
+    // setFailModalVisible(false);
   };
 
   return (
